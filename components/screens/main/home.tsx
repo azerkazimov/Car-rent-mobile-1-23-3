@@ -3,11 +3,11 @@ import { layoutTheme } from "@/constant/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { ThemeType } from "@/types/theme-types";
 import { useState } from "react";
-import { RefreshControl, StyleSheet, Text, View } from "react-native";
+import { RefreshControl, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import SaleCard from "./components/sale-card";
 import CarCategoryTrigger from "./components/car-category-trigger";
 import CarsCatalog from "./components/cars-catalog";
+import SaleCard from "./components/sale-card";
 
 export default function Home() {
   const [refreshing, setRefreshing] = useState(false);
