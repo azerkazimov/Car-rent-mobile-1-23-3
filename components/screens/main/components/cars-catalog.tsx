@@ -7,12 +7,21 @@ import { FlatList, StyleSheet, Text, View } from "react-native";
 import CarCard from "./car-card";
 
 export default function CarsCatalog() {
-  const cars = carModels;
+  const shuffleArray = (array: any[]) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+  const [cars, setCars] = useState(() => shuffleArray(carModels));
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = async () => {
     setRefreshing(true);
     await new Promise((resolve) => setTimeout(resolve, 2000));
+    setCars(shuffleArray(carModels));
     setRefreshing(false);
   };
 
@@ -56,9 +65,10 @@ const getStyles = (colorScheme: "light" | "dark") =>
     titleText: {
       fontSize: 20,
       fontWeight: "500",
-      color: colorScheme === "dark" 
-        ? layoutTheme.colors.text.inverse 
-        : layoutTheme.colors.text.primary,
+      color:
+        colorScheme === "dark"
+          ? layoutTheme.colors.text.inverse
+          : layoutTheme.colors.text.primary,
     },
     linkText: {
       fontSize: 12,
