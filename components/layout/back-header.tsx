@@ -1,21 +1,18 @@
 import { layoutTheme } from "@/constant/theme";
 import { useTheme } from "@/hooks/use-theme";
+import { useCartStore } from "@/store/cart.store";
 import { ThemeType } from "@/types/theme-types";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { useCartStore } from "@/store/cart.store";
-
-export default function CheckoutHeader() {
+export default function BackHeader() {
   const { colorScheme, theme } = useTheme();
   const styles = getStyles(colorScheme);
   const router = useRouter();
-  const count = useCartStore((s) => s.count);
-  const totalQuantity = useCartStore((s) => s.totalQuantity);
-  const clear = useCartStore((s) => s.clear);
+  const items = useCartStore((s) => s.items);
 
-  const displayCount = totalQuantity > 9 ? "9+" : totalQuantity;
+  const displayCount = items.length > 9 ? "9+" : items.length;
 
   return (
     <View style={styles.container}>
@@ -30,7 +27,7 @@ export default function CheckoutHeader() {
           }
         />
       </Pressable>
-      <Pressable style={styles.cartWrapper} onPress={() => count > 0 && clear()}>
+      <View style={styles.cartWrapper}>
         <Ionicons
           name="cart-outline"
           size={40}
@@ -40,12 +37,12 @@ export default function CheckoutHeader() {
               : layoutTheme.colors.secondary[500]
           }
         />
-        {count > 0 && (
+        {items.length > 0 && (
           <View style={styles.badge}>
             <Text style={styles.badgeText}>{displayCount}</Text>
           </View>
         )}
-      </Pressable>
+      </View>
     </View>
   );
 }

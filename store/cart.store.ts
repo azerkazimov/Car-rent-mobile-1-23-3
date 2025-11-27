@@ -1,39 +1,39 @@
 import { CarType } from "@/types/car-types";
 import { create } from "zustand";
 
-type CartLastSelected = {
+export type CartItem = {
   car: CarType;
   quantity: number;
 };
 
 type CartStore = {
-  count: number;
-  totalQuantity: number;
-  lastSelected?: CartLastSelected | null;
+  items: CartItem[];
   addOne: (car: CarType, quantity?: number) => void;
-  removeOne: () => void;
+  removeOne: (carId: string) => void;
   clear: () => void;
 };
 
 export const useCartStore = create<CartStore>((set, get) => ({
-  count: 0,
-  totalQuantity: 0,
-  lastSelected: null,
+  items: [],
   addOne: (car: CarType, quantity = 1) =>
-    set((state) => ({
-      count: state.count + 1,
-      totalQuantity: state.totalQuantity + quantity,
-      lastSelected: { car, quantity },
-    })),
-  removeOne: () =>
     set((state) => {
-      const newTotalQuantity = Math.max(0, state.totalQuantity - 1);
-      const next = Math.max(0, state.count - 1);
+      const existingItem = state.items.find((item) => item.car.id === car.id);
+      if (existingItem) {
+        return {
+          items: state.items.map((item) =>
+            item.car.id === car.id
+              ? { ...item, quantity: item.quantity + quantity }
+              : item
+          ),
+        };
+      }
       return {
-        count: next,
-        totalQuantity: newTotalQuantity,
-        lastSelected: next === 0 ? null : state.lastSelected,
+        items: [...state.items, { car, quantity }],
       };
     }),
-  clear: () => set({ count: 0, totalQuantity: 0, lastSelected: null }),
+  removeOne: (carId: string) =>
+    set((state) => ({
+      items: state.items.filter((item) => item.car.id !== carId),
+    })),
+  clear: () => set({ items: [] }),
 }));

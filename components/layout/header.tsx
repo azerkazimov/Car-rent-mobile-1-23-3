@@ -1,20 +1,19 @@
 import { layoutTheme } from "@/constant/theme";
 import { useTheme } from "@/hooks/use-theme";
+import { useCartStore } from "@/store/cart.store";
 import { ThemeType } from "@/types/theme-types";
 import { Ionicons } from "@expo/vector-icons";
-import { Pressable, StyleSheet, Text, View } from "react-native";
-
-import { useCartStore } from "@/store/cart.store";
 import { Image } from "expo-image";
+import { useRouter } from "expo-router";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function Header() {
   const { colorScheme, theme } = useTheme();
   const styles = getStyles(colorScheme);
-  const count = useCartStore((s) => s.count);
-  const totalQuantity = useCartStore((s) => s.totalQuantity);
-  const clear = useCartStore((s) => s.clear);
+  const items = useCartStore((s) => s.items);
+  const router = useRouter();
   
-  const displayCount = totalQuantity > 9 ? "9+" : totalQuantity;
+  const displayCount = items.length > 9 ? "9+" : items.length;
 
   return (
     <View style={styles.container}>
@@ -22,7 +21,7 @@ export default function Header() {
         source={require("../../assets/images/icons/menu.png")}
         style={styles.menu}
       />
-      <Pressable style={styles.cartWrapper} onPress={() => count > 0 && clear()}>
+      <Pressable style={styles.cartWrapper} onPress={() => router.push("/cart/page")}>
         <Ionicons
           name="cart-outline"
           size={40}
@@ -32,7 +31,7 @@ export default function Header() {
               : layoutTheme.colors.secondary[500]
           }
         />
-        {count > 0 && (
+        {items.length > 0 && (
           <View style={styles.badge}>
             <Text style={styles.badgeText}>{displayCount}</Text>
           </View>

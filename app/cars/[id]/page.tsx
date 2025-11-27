@@ -6,12 +6,12 @@ import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import {
-  Dimensions,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    Dimensions,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from "react-native";
 
 const { width } = Dimensions.get("window");
@@ -134,7 +134,7 @@ export default function CarDetails() {
               onPress={() => {
                 const add = require("@/store/cart.store").useCartStore.getState().addOne;
                 add(car as CarType, quantity);
-                router.push("/checkout/page");
+                router.push("/cart/page");
               }}
               variant="secondary"
             />
