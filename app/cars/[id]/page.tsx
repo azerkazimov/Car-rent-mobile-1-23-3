@@ -3,7 +3,7 @@ import { carModels } from "@/data/car-models";
 import { CarType } from "@/types/car-types";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { Link, useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Dimensions,
@@ -129,7 +129,15 @@ export default function CarDetails() {
                 <Text style={styles.quantityButtonText}>+</Text>
               </Pressable>
             </View>
-            <Button title="BOOK NOW" onPress={() => router.push("/checkout/page")} variant="secondary" />
+            <Button
+              title="BOOK NOW"
+              onPress={() => {
+                const add = require("@/store/cart.store").useCartStore.getState().addOne;
+                add(car as CarType, quantity);
+                router.push("/checkout/page");
+              }}
+              variant="secondary"
+            />
           </View>
         </View>
       </ScrollView>

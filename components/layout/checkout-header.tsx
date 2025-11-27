@@ -2,26 +2,34 @@ import { layoutTheme } from "@/constant/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { ThemeType } from "@/types/theme-types";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { useCartStore } from "@/store/cart.store";
-import { Image } from "expo-image";
 
-export default function Header() {
+export default function CheckoutHeader() {
   const { colorScheme, theme } = useTheme();
   const styles = getStyles(colorScheme);
+  const router = useRouter();
   const count = useCartStore((s) => s.count);
   const totalQuantity = useCartStore((s) => s.totalQuantity);
   const clear = useCartStore((s) => s.clear);
-  
+
   const displayCount = totalQuantity > 9 ? "9+" : totalQuantity;
 
   return (
     <View style={styles.container}>
-      <Image
-        source={require("../../assets/images/icons/menu.png")}
-        style={styles.menu}
-      />
+      <Pressable onPress={() => router.back()}>
+        <Ionicons
+          name="chevron-back"
+          size={32}
+          color={
+            theme === "dark"
+              ? "#fff"
+              : layoutTheme.colors.secondary[500]
+          }
+        />
+      </Pressable>
       <Pressable style={styles.cartWrapper} onPress={() => count > 0 && clear()}>
         <Ionicons
           name="cart-outline"
@@ -52,14 +60,8 @@ const getStyles = (theme: ThemeType) =>
       paddingHorizontal: 24,
       flexDirection: "row",
       justifyContent: "space-between",
-      width: "100%",
       alignItems: "center",
       paddingVertical: 12,
-    },
-    menu: {
-      width: 40,
-      height: 40,
-      resizeMode: "contain",
     },
     cartWrapper: {
       width: 40,
@@ -71,7 +73,7 @@ const getStyles = (theme: ThemeType) =>
       position: "absolute",
       right: -6,
       top: -6,
-      backgroundColor: "#DC2626",
+      backgroundColor: "#10B981",
       minWidth: 18,
       height: 18,
       borderRadius: 9,
