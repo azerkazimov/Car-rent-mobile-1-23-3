@@ -41,6 +41,7 @@ export const layoutTheme = {
         soft: "#F0ECEC", // using pastel tone (#988080 → soft tint)
         dark: "#1A1A1A",
         light: "#FFFFFF",
+        gray: "#a6a5a2",
       },
   
       text: {
@@ -51,6 +52,7 @@ export const layoutTheme = {
         inverse: "#FFFFFF",
         highlight: "#C64949",
         link: "#FCC21B",
+        error: "#C64949",
       },
   
       button: {

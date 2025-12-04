@@ -5,16 +5,31 @@ import SignIn from "./sign-in/page";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
+import { useRouter } from "expo-router";
+import { Alert } from "react-native";
+import { useAuthStore } from "@/store/auth.store";
 
 export default function Index() {
+  const router = useRouter();
   const { index } = useLaunchStore();
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
-  const getIsAuthenticated = async () =>
-    setIsAuthenticated(await AsyncStorage.getItem("isAuthenticated") === "true");
+  const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {
-    getIsAuthenticated();
+    const checkAuthentication = async () => {
+      try {
+        const isAuthenticated = await AsyncStorage.getItem("isAuthenticated")
+        if (isAuthenticated === "true") {
+          router.replace("/(tabs)");
+        } else {
+          router.replace("/sign-in/page");
+        }
+      } catch (error) {
+        Alert.alert("Error", "Failed to check authentication");
+        console.log(error);
+      }
+    }
+    checkAuthentication();
   }, []);
 
   return (
