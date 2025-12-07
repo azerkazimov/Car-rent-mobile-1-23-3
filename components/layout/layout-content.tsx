@@ -18,8 +18,12 @@ export default function LayoutContent() {
     ...questrial,
     ...iceberg,
   };
+
+
   const { colorScheme } = useTheme();
   const { loaded, error } = useLayoutFonts(fonts);
+
+
 
   if (!loaded && !error) {
     return null;

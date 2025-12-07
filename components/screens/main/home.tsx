@@ -20,6 +20,8 @@ export default function Home() {
 
   const { colorScheme } = useTheme();
   const styles = getStyles(colorScheme);
+
+
   return (
     <>
       <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -28,6 +30,8 @@ export default function Home() {
         <View style={styles.saleCardContainer}>
           <SaleCard />
         </View>
+        
+
         <View style={styles.carCategoryTriggerContainer}>
           <CarCategoryTrigger />
         </View>
@@ -46,6 +50,9 @@ const getStyles = (theme: ThemeType) =>
         theme === "dark"
           ? layoutTheme.colors.background.dark
           : layoutTheme.colors.background.light,
+    },
+    expoPushTokenContainer: {
+      marginTop: 10,
     },
     text: {
       fontSize: 26,
