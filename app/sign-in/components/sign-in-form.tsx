@@ -7,9 +7,19 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Label } from "@react-navigation/elements";
 import { Link, useRouter } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
-import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Alert,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import { SignInSchema, signInSchema } from "./sign-in.schema";
-
 
 export default function SignInForm() {
   const router = useRouter();
@@ -55,83 +65,101 @@ export default function SignInForm() {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerContent}>
-          <Text style={styles.title}>Sign In</Text>
-          <View style={styles.underline} />
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <View style={{ flex: 1 }}>
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            keyboardShouldPersistTaps="handled"
+          >
+            <View style={styles.container}>
+              {/* Header */}
+              <View style={styles.header}>
+                <View style={styles.headerContent}>
+                  <Text style={styles.title}>Sign In</Text>
+                  <View style={styles.underline} />
+                </View>
+              </View>
+
+              <View style={styles.formGroup}>
+                <Label style={styles.label}>EMAIL OR PHONE</Label>
+                <Controller
+                  control={control}
+                  name="email"
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Email"
+                        value={value}
+                        onChangeText={onChange}
+                        onBlur={onBlur}
+                      />
+                      {errors.email && (
+                        <Text style={styles.error}>{errors.email.message}</Text>
+                      )}
+                    </>
+                  )}
+                />
+              </View>
+              <View style={styles.formGroup}>
+                <Label style={styles.label}>PASSWORD</Label>
+                <Controller
+                  control={control}
+                  name="password"
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Password"
+                        value={value}
+                        onChangeText={onChange}
+                        onBlur={onBlur}
+                        secureTextEntry
+                      />
+                      {errors.password && (
+                        <Text style={styles.error}>
+                          {errors.password?.message}
+                        </Text>
+                      )}
+                    </>
+                  )}
+                />
+              </View>
+
+              {/* BUTTONS */}
+              <View style={styles.buttonsContainer}>
+                <Button title="Sign In" onPress={handleSubmit(onSubmit)} />
+
+                <Text style={styles.orText}>OR</Text>
+                <SosialButton
+                  icon={require("../../../assets/images/icons/google-icon.png")}
+                  title="Sign Up with Google"
+                  onPress={() => {}}
+                />
+                <SosialButton
+                  icon={require("../../../assets/images/icons/facebook-icon.png")}
+                  title="Sign Up with Google"
+                  onPress={() => {}}
+                />
+              </View>
+
+              <View style={styles.linkContainer}>
+                <Text style={styles.linkText}>
+                  {`If you don't have an account?`}{" "}
+                </Text>
+                <Link href="/sign-up/page" style={styles.link}>
+                  Sign Up
+                </Link>
+              </View>
+            </View>
+          </ScrollView>
         </View>
-      </View>
-
-      <View style={styles.formGroup}>
-        <Label style={styles.label}>EMAIL OR PHONE</Label>
-        <Controller
-          control={control}
-          name="email"
-          render={({ field: { value, onChange, onBlur } }) => (
-            <>
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-              />
-              {errors.email && (
-                <Text style={styles.error}>{errors.email.message}</Text>
-              )}
-            </>
-          )}
-        />
-      </View>
-      <View style={styles.formGroup}>
-        <Label style={styles.label}>PASSWORD</Label>
-        <Controller
-          control={control}
-          name="password"
-          render={({ field: { value, onChange, onBlur } }) => (
-            <>
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                secureTextEntry
-              />
-              {errors.password && (
-                <Text style={styles.error}>{errors.password?.message}</Text>
-              )}
-            </>
-          )}
-        />
-      </View>
-
-      {/* BUTTONS */}
-      <View style={styles.buttonsContainer}>
-        <Button title="Sign In" onPress={handleSubmit(onSubmit)} />
-
-        <Text style={styles.orText}>OR</Text>
-        <SosialButton
-          icon={require("../../../assets/images/icons/google-icon.png")}
-          title="Sign Up with Google"
-          onPress={() => {}}
-        />
-        <SosialButton
-          icon={require("../../../assets/images/icons/facebook-icon.png")}
-          title="Sign Up with Google"
-          onPress={() => {}}
-        />
-      </View>
-
-      <View style={styles.linkContainer}>
-        <Text style={styles.linkText}>{`If you don't have an account?`} </Text>
-        <Link href="/sign-up/page" style={styles.link}>
-          Sign Up
-        </Link>
-      </View>
-    </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
