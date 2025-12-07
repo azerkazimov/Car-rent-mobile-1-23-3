@@ -2,7 +2,6 @@ export enum CarCategoryEnum {
     LUXURY = "luxury",
     FAMILY = "family",
     CHEAP = "cheap",
-    ALL = "all",
 }
 
 export type CarCategory = CarType & {

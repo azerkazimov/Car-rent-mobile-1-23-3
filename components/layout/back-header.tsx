@@ -3,25 +3,31 @@ import { useTheme } from "@/hooks/use-theme";
 import { useCartStore } from "@/store/cart.store";
 import { ThemeType } from "@/types/theme-types";
 import { Ionicons } from "@expo/vector-icons";
-import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-export default function Header() {
+export default function BackHeader() {
   const { colorScheme, theme } = useTheme();
   const styles = getStyles(colorScheme);
-  const items = useCartStore((s) => s.items);
   const router = useRouter();
-  
+  const items = useCartStore((s) => s.items);
+
   const displayCount = items.length > 9 ? "9+" : items.length;
 
   return (
     <View style={styles.container}>
-      <Image
-        source={require("../../assets/images/icons/menu.png")}
-        style={styles.menu}
-      />
-      <Pressable style={styles.cartWrapper} onPress={() => router.push("/cart/page")}>
+      <Pressable onPress={() => router.back()}>
+        <Ionicons
+          name="chevron-back"
+          size={32}
+          color={
+            theme === "dark"
+              ? "#fff"
+              : layoutTheme.colors.secondary[500]
+          }
+        />
+      </Pressable>
+      <View style={styles.cartWrapper}>
         <Ionicons
           name="cart-outline"
           size={40}
@@ -36,7 +42,7 @@ export default function Header() {
             <Text style={styles.badgeText}>{displayCount}</Text>
           </View>
         )}
-      </Pressable>
+      </View>
     </View>
   );
 }
@@ -51,14 +57,8 @@ const getStyles = (theme: ThemeType) =>
       paddingHorizontal: 24,
       flexDirection: "row",
       justifyContent: "space-between",
-      width: "100%",
       alignItems: "center",
       paddingVertical: 12,
-    },
-    menu: {
-      width: 40,
-      height: 40,
-      resizeMode: "contain",
     },
     cartWrapper: {
       width: 40,
@@ -70,7 +70,7 @@ const getStyles = (theme: ThemeType) =>
       position: "absolute",
       right: -6,
       top: -6,
-      backgroundColor: "#DC2626",
+      backgroundColor: "#10B981",
       minWidth: 18,
       height: 18,
       borderRadius: 9,

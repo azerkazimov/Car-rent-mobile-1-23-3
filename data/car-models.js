@@ -73,7 +73,7 @@ export const carModels = [
       "transmission": "Automatic",
       "fuelType": "Petrol",
       "pricePerDay": 150,
-      "image": "https://mystrongad.com/MWB_MotorwerksBMW/Digital/3%20Series/2024/2024-BMW-3-Series-Gray.webp",
+      "image": "https://www.bmwusa.com/content/dam/bmw/common/vehicles/2024/my25/3-series-sedan/sp/BMW-MY25-3-Series-Overview-SP-Desktop.jpg",
       "features": ["Sport Package", "Navigation", "Parking Sensors", "Keyless Entry"],
       "categories": ["family"]
     },
@@ -88,7 +88,7 @@ export const carModels = [
       "transmission": "Automatic",
       "fuelType": "Diesel",
       "pricePerDay": 200,
-      "image": "https://alcf.s3.us-west-1.amazonaws.com/_custom/2024/bmw/x5/2024%20bmw%20x5%20m%20competition.png",
+      "image": "https://www.bmwusa.com/content/dam/bmw/common/vehicles/2023/my24/x5/sp/BMW-MY24-X5-Overview-SP-Desktop.jpg",
       "features": ["Third Row Seats", "Panoramic Roof", "All-Wheel Drive", "Harman Kardon Audio"],
       "categories": ["luxury", "family"]
     },
@@ -103,7 +103,7 @@ export const carModels = [
       "transmission": "Automatic",
       "fuelType": "Petrol",
       "pricePerDay": 300,
-      "image": "https://platform.cstatic-images.com/in/v2/stock_photos/981613ec-608c-44f3-adb6-da9504230dd9/877169ea-ff6b-4175-8c64-3e0e4a7f4313.png",
+      "image": "https://www.bmwusa.com/content/dam/bmw/common/vehicles/2023/my24/m-models/m4-coupe/sp/BMW-MY24-M4-Coupe-Overview-SP-Desktop.jpg",
       "features": ["M Sport Package", "Carbon Fiber Trim", "Track Mode", "Performance Brakes"],
       "categories": ["luxury"]
     },
@@ -118,7 +118,7 @@ export const carModels = [
       "transmission": "Automatic",
       "fuelType": "Electric",
       "pricePerDay": 180,
-      "image": "https://dealerimages.dealereprocess.com/image/upload/c_limit,f_auto,fl_lossy,w_600/v1/svp/dep/24bmwi4grancoupe/bmw_24i4grancoupe_angularfront_alpinewhite",
+      "image": "https://www.bmwusa.com/content/dam/bmw/common/vehicles/2023/my24/i4/sp/BMW-MY24-i4-Overview-SP-Desktop.jpg",
       "features": ["Electric Drive", "Fast Charging", "Autopilot", "Premium Interior"],
       "categories": ["family"]
     },

@@ -37,17 +37,11 @@ export default function LayoutContent() {
 
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="sign-up/page" options={{ headerShown: false }} />
         <Stack.Screen name="sign-in/page" options={{ headerShown: false }} />
-        <Stack.Screen name="cars/[id]/page" options={{ headerShown: false, animation: "slide_from_right", }} />
+        <Stack.Screen name="cars/[id]/page" options={{ headerShown: false }} />
+        <Stack.Screen name="cart/page" options={{ headerShown: false }} />
         <Stack.Screen name="checkout/page" options={{ headerShown: false }} />
-        <Stack.Screen name="payment/page" options={{ headerShown: false }} />
-        <Stack.Screen name="credit-card/page" options={{ headerShown: false }} />
-        <Stack.Screen name="confirm-payment/page" options={{ headerShown: false }} />
-        <Stack.Screen name="payment-made/page" options={{ headerShown: false }} />
-        <Stack.Screen name="driver-license/page" options={{ headerShown: false }} />
-        
       </Stack>
     </>
   );

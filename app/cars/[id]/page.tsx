@@ -1,18 +1,17 @@
 import Button from "@/components/ui/button";
 import { carModels } from "@/data/car-models";
-import { useCartStore } from "@/store/cart.store";
 import { CarType } from "@/types/car-types";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import {
-  Dimensions,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    Dimensions,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from "react-native";
 
 const { width } = Dimensions.get("window");
@@ -20,9 +19,9 @@ const { width } = Dimensions.get("window");
 export default function CarDetails() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
-  const { addItem } = useCartStore();
   const car = carModels.find((car: CarType) => car.id === id);
   const [quantity, setQuantity] = useState(1);
+  const [activeSpecIndex, setActiveSpecIndex] = useState(0);
 
   if (!car) {
     return (
@@ -35,16 +34,6 @@ export default function CarDetails() {
   const handleIncrement = () => setQuantity(quantity + 1);
   const handleDecrement = () => {
     if (quantity > 1) setQuantity(quantity - 1);
-  };
-
-  const handleBookNow = () => {
-    if (car) {
-      // Add the car to cart with the selected quantity
-      for (let i = 0; i < quantity; i++) {
-        addItem(car);
-      }
-      router.push("/checkout/page");
-    }
   };
 
   return (
@@ -142,7 +131,11 @@ export default function CarDetails() {
             </View>
             <Button
               title="BOOK NOW"
-              onPress={handleBookNow}
+              onPress={() => {
+                const add = require("@/store/cart.store").useCartStore.getState().addOne;
+                add(car as CarType, quantity);
+                router.push("/cart/page");
+              }}
               variant="secondary"
             />
           </View>

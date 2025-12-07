@@ -1,13 +1,15 @@
 import { layoutTheme } from "@/constant/theme";
 import { useTheme } from "@/hooks/use-theme";
-import { useCarCategoryStore } from "@/store/car-category.store";
 import { CarCategoryEnum } from "@/types/car-types";
 import { ThemeType } from "@/types/theme-types";
 import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function CarCategoryTrigger() {
-  const { selectedCategory, setSelectedCategory } = useCarCategoryStore();
+  const [selectedCategory, setSelectedCategory] = useState<CarCategoryEnum>(
+    CarCategoryEnum.FAMILY
+  );
 
   const { colorScheme } = useTheme();
   const styles = getStyles(colorScheme);

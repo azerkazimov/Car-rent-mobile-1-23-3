@@ -2,10 +2,9 @@ import { layoutTheme } from "@/constant/theme";
 import { carModels } from "@/data/car-models";
 import { useTheme } from "@/hooks/use-theme";
 import { Link } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import CarCard from "./car-card";
-import { useCarCategoryStore } from "@/store/car-category.store";
 
 export default function CarsCatalog() {
   const shuffleArray = (array: any[]) => {
@@ -16,32 +15,18 @@ export default function CarsCatalog() {
     }
     return shuffled;
   };
-  const [cars, setCars] = useState<any[]>([]);
-  const { selectedCategory } = useCarCategoryStore();
-  const { colorScheme } = useTheme();
-  const styles = getStyles(colorScheme);
-
-  const filteredCars = carModels.filter((car) =>
-    car.categories.includes(selectedCategory)
-  );
-
-  useEffect(() => {
-    if (filteredCars.length > 0) {
-      setCars(shuffleArray(filteredCars));
-    } else {
-      setCars(shuffleArray(carModels));
-    }
-  }, [filteredCars]);
-
-
+  const [cars, setCars] = useState(() => shuffleArray(carModels));
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = async () => {
     setRefreshing(true);
     await new Promise((resolve) => setTimeout(resolve, 2000));
+    setCars(shuffleArray(carModels));
     setRefreshing(false);
   };
 
+  const { colorScheme } = useTheme();
+  const styles = getStyles(colorScheme);
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
