@@ -29,15 +29,28 @@ const loadPaymentFromStorage = async (): Promise<string | null> => {
 
 export interface PaymentStore {
     selectedPayment: string | null;
+    saveCardInfo: boolean;
+    grandTotalPrice: number;
+    grandTotalDriversFee: number;
+
+    setGrandTotalPrice: (price: number) => void;
+    setGrandTotalDriversFee: (fee: number) => void;
     setSelectedPayment: (method: string) => void;
+    setSaveCardInfo: (saveCardInfo: boolean) => void;
 }
 
-export const usePaymentStore = create<PaymentStore>((set)=>({
+export const usePaymentStore = create<PaymentStore>((set) => ({
     selectedPayment: null,
-    setSelectedPayment: (method: string)=>{
-        set({selectedPayment: method});
+    saveCardInfo: false,
+    grandTotalPrice: 0,
+    grandTotalDriversFee: 0,
+    setSelectedPayment: (method: string) => {
+        set({ selectedPayment: method });
         savePaymentToStorage(method);
-    }
+    },
+    setGrandTotalPrice: (price: number) => set({ grandTotalPrice: price }),
+    setGrandTotalDriversFee: (fee: number) => set({ grandTotalDriversFee: fee }),
+    setSaveCardInfo: (saveCardInfo: boolean) => set({ saveCardInfo }),
 }));
 
 // Initialize the store with data from AsyncStorage

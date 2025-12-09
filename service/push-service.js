@@ -6,7 +6,7 @@ import * as Notifications from "expo-notifications";
 export async function sendLocalNotification({ title, body, data = {} }) {
   try {
     const notification = await Notifications.scheduleNotificationAsync({
-      conetnt: {
+      content: {
         title,
         body,
         data,
@@ -33,7 +33,7 @@ export async function scheduleNotification({
 }) {
   try {
     const notification = await Notifications.scheduleNotificationAsync({
-      conetnt: {
+      content: {
         title,
         body,
         data,
@@ -53,10 +53,10 @@ export async function scheduleNotification({
 }
 
 export async function sendBookingConfirmedNotification(bookingDetails) {
-  const { bookingId, carBrand, carModel, totalPrice } = bookingDetails;
+  const { bookingId, carBrand, carModel, totalPrice, rentalDays } = bookingDetails;
 
   const title = `Booking Confirmed: ${carBrand} ${carModel} 🥳`;
-  const body = `Your booking #${carModel} has been confirmed. Total Price: $${totalPrice}`;
+  const body = `Your ${rentalDays} day rental has been confirmed. Total: $${totalPrice.toFixed(2)}`;
 
   const data = {
     type: "booking_confirmed",
@@ -64,9 +64,22 @@ export async function sendBookingConfirmedNotification(bookingDetails) {
     carBrand,
     carModel,
     totalPrice,
+    rentalDays,
+    timestamp: new Date().toISOString(),
   };
 
-  return await sendLocalNotification({ title, body, data });
+  // Send the local notification
+  const notificationId = await sendLocalNotification({ title, body, data });
+  
+  // Save to notification history
+  await saveNotificationHistory({
+    identifier: notificationId || `booking_${Date.now()}`,
+    title,
+    body,
+    data,
+  });
+  
+  return notificationId;
 }
 
 export async function sendBookingReminderNotification({
@@ -78,7 +91,7 @@ export async function sendBookingReminderNotification({
   const body = `Your booking for ${carBrand} ${carModel} is in ${bookingTime}. Please be on time!`;
 
   const data = {
-    type: "booking_confirmed",
+    type: "`booking_confirmed`",
     carBrand,
     carModel,
     bookingTime,
@@ -133,7 +146,7 @@ export async function getServerNotificationPayload(bookingDetails) {
       totalPrice,
     },
     priority: "high",
-    chanelId: "booking_notifications",
+    channelId: "booking_notifications",
   };
 }
 

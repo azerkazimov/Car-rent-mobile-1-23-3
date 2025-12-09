@@ -38,7 +38,7 @@ export default function Checkout() {
   const handleConfirm = () => {
     const hasSelectedItem = items.some(item => item.isSelected);
     if (hasSelectedItem) {
-      router.push("/confirm-payment/page");
+      router.push("/payment/page");
     } else {
       Alert.alert("Please select an item to confirm");
     }

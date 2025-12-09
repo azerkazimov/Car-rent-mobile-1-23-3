@@ -1,5 +1,7 @@
 import { layoutTheme } from "@/constant/theme";
+import { sendBookingConfirmedNotification } from "@/service/push-service";
 import { useCartStore } from "@/store/cart.store";
+import { usePaymentStore } from "@/store/payment.store";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -8,14 +10,24 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 export default function ConfirmPaymentPage() {
   const router = useRouter();
   const { items, removeItem } = useCartStore();
-
+  const { setGrandTotalPrice, setGrandTotalDriversFee } = usePaymentStore();
   // Get all selected items
   const selectedItems = items.filter((item) => item.isSelected);
 
   if (selectedItems.length === 0) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.emptyText}>No item selected for payment</Text>
+      <View style={styles.backContainer}>
+        <View style={styles.backIcon}>
+          <Pressable
+            onPress={() => router.push("/")}
+            style={styles.headerButton}
+          >
+            <Ionicons name="chevron-back" size={28} color="#1F2937" />
+          </Pressable>
+        </View>
+        <View style={styles.container}>
+          <Text style={styles.emptyText}>No item selected for payment</Text>
+        </View>
       </View>
     );
   }
@@ -27,9 +39,33 @@ export default function ConfirmPaymentPage() {
   );
   const totalDriversFee = totalPrice * 0.05;
   const grandTotal = totalPrice + totalDriversFee;
+  
+  setGrandTotalPrice(totalPrice);
+  setGrandTotalDriversFee(totalDriversFee);
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
+    // Send booking confirmation notification for each selected car
+    for (const item of selectedItems) {
+      const bookingDetails = {
+        bookingId: `BK-${Date.now()}-${item.id}`,
+        carBrand: item.car.brand,
+        carModel: item.car.model || item.car.brand,
+        totalPrice: item.car.pricePerDay * item.quantity + (item.car.pricePerDay * item.quantity * 0.05),
+        rentalDays: item.quantity,
+      };
+
+      try {
+        await sendBookingConfirmedNotification(bookingDetails);
+        console.log("Booking notification sent for:", bookingDetails.carBrand);
+      } catch (error) {
+        console.error("Failed to send booking notification:", error);
+      }
+    }
+
+    // Navigate to success page
     router.push("/payment-made/page");
+    
+    // Remove items from cart
     if (selectedItems.length === 1) {
       removeItem(selectedItems[0].id);
     } else {
@@ -47,7 +83,7 @@ export default function ConfirmPaymentPage() {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.headerButton}>
+        <Pressable onPress={() => router.back()} style={styles.iconContainer}>
           <Ionicons name="chevron-back" size={28} color="#1F2937" />
         </Pressable>
 
@@ -121,6 +157,15 @@ export default function ConfirmPaymentPage() {
 }
 
 const styles = StyleSheet.create({
+  backContainer: {
+    flex: 1,
+    
+  },
+  backIcon:{
+    alignItems: "flex-start",
+    marginTop: 80,
+    marginBottom: 40,
+  },
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",

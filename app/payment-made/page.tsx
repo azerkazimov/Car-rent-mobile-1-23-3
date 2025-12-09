@@ -1,23 +1,17 @@
 import { layoutTheme } from "@/constant/theme";
 import { useCartStore } from "@/store/cart.store";
+import { usePaymentStore } from "@/store/payment.store";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import {
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
-} from "react-native";
-
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function PaymentMadePage() {
   const router = useRouter();
-  const { items } = useCartStore();
 
-  // Calculate total with driver's fee
-  const totalPrice = items.reduce((acc, item) => acc + item.car.pricePerDay * item.quantity, 0);
+  const { grandTotalPrice, grandTotalDriversFee } = usePaymentStore();
+
+  const grandTotal = grandTotalPrice + grandTotalDriversFee;
 
   const handleTrack = () => {
     // Navigate to tracking page (implement later)
@@ -48,7 +42,10 @@ export default function PaymentMadePage() {
       >
         {/* Success Icon */}
         <View style={styles.iconContainer}>
-          <Image source={require("../../assets/images/veryfy-payment.png")} style={styles.successIcon} />
+          <Image
+            source={require("../../assets/images/veryfy-payment.png")}
+            style={styles.successIcon}
+          />
         </View>
 
         {/* Thank You Text */}
@@ -57,12 +54,13 @@ export default function PaymentMadePage() {
         {/* Payment Made Section */}
         <View style={styles.paymentInfoContainer}>
           <Text style={styles.paymentMadeLabel}>PAYMENT MADE</Text>
-          <Text style={styles.paymentAmount}>${totalPrice.toFixed(0)}</Text>
+          <Text style={styles.paymentAmount}>${grandTotal.toFixed(0)}</Text>
         </View>
 
         {/* Success Message */}
         <Text style={styles.successMessage}>
-          Well done Your payment is{"\n"}Successfuly  done{"\n"}and your car is on its way.
+          Well done Your payment is{"\n"}Successfuly done{"\n"}and your car is
+          on its way.
         </Text>
       </ScrollView>
 

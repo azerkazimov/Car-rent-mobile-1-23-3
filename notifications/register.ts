@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 
@@ -26,18 +27,11 @@ export async function registerForPushNotifications(): Promise<string | null> {
         }
 
         if (finalStatus !== 'granted') {
-            alert('Permission for push notifications was denied');
+            console.log('Permission for push notifications was denied');
             return null;
         }
 
-        const tokenData = await Notifications.getExpoPushTokenAsync({
-            projectId: "62138462376hjsakj273498",
-        })
-
-        const token = tokenData.data;
-
-        await AsyncStorage.setItem('pushToken', token);
-
+        // Setup Android notification channel first
         if (Platform.OS === 'android') {
             await Notifications.setNotificationChannelAsync('booking_notifications', {
                 name: 'booking_notifications',
@@ -51,11 +45,20 @@ export async function registerForPushNotifications(): Promise<string | null> {
             })
         }
 
-        await Notifications.setNotificationChannelAsync('booking_notifications', {
-            name: 'booking_notifications',
-            importance: Notifications.AndroidImportance.MAX,
-            sound: 'default',
+        // Try to get Expo push token (requires EAS projectId)
+        const projectId = Constants.expoConfig?.extra?.eas?.projectId;
+        
+        if (!projectId) {
+            console.log('No EAS projectId found - local notifications will work, but remote push notifications require EAS configuration. Run: npx eas build:configure');
+            return null;
+        }
+
+        const tokenData = await Notifications.getExpoPushTokenAsync({
+            projectId,
         })
+
+        const token = tokenData.data;
+        await AsyncStorage.setItem('pushToken', token);
 
         return token;
 

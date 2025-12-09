@@ -17,9 +17,10 @@ export default function CreditCardPage() {
   const router = useRouter();
   const { colorScheme } = useTheme();
   const styles = getStyles(colorScheme);
-  const [rememberInfo, setRememberInfo] = useState(true);
-  const { selectedPayment } = usePaymentStore();
 
+  const { selectedPayment, saveCardInfo, setSaveCardInfo } = usePaymentStore();
+
+  const [cardNumber, setCardNumber] = useState("");
 
   const {
     register,
@@ -44,6 +45,13 @@ export default function CreditCardPage() {
 
   const onSubmit = (data: CreditCardSchema) => {
     router.push("/confirm-payment/page");
+  };
+
+  const formatCardNumber = (text: string) => {
+    const cleaned = text.replace(/\D/g, "");
+    const formatted = cleaned.match(/.{1,4}/g)?.join(" ") || cleaned;
+    setCardNumber(formatted);
+    setValue("cardNumber", formatted, { shouldValidate: true });
   };
 
   return (
@@ -85,13 +93,8 @@ export default function CreditCardPage() {
                       keyboardType="numeric"
                       placeholder="0000 0000 0000 0000"
                       maxLength={19}
-                      onChangeText={(text) => {
-                        const formatted = text
-                          .replace(/\s/g, "")
-                          .replace(/(\d{4})/g, "$1 ")
-                          .trim();
-                        setValue("cardNumber", formatted);
-                      }}
+                      onChangeText={formatCardNumber}
+                      value={cardNumber}
                     />
                   </View>
                   {errors.cardNumber && (
@@ -136,7 +139,8 @@ export default function CreditCardPage() {
                   </View>
                   {errors.expirationDate && (
                     <Text style={styles.errorText}>
-                      {errors.expirationDate.message || errors.expirationDate.root?.message}
+                      {errors.expirationDate.message ||
+                        errors.expirationDate.root?.message}
                     </Text>
                   )}
                 </View>
@@ -166,10 +170,10 @@ export default function CreditCardPage() {
                 <View style={styles.formRow}>
                   <Text style={styles.formLabel}>Rememer This Info:</Text>
                   <Switch
-                    value={rememberInfo}
-                    onValueChange={setRememberInfo}
+                    value={saveCardInfo}
+                    onValueChange={setSaveCardInfo}
                     trackColor={{ false: "#767577", true: "#4A90A4" }}
-                    thumbColor={rememberInfo ? "#FFFFFF" : "#f4f3f4"}
+                    thumbColor={saveCardInfo ? "#FFFFFF" : "#f4f3f4"}
                   />
                 </View>
               </View>
