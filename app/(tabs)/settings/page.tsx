@@ -46,7 +46,7 @@ export default function SettingsPage() {
     { label: "Profile Settings", onPress: () => {} },
     { label: "Language", onPress: () => {} },
     { label: "Set Password", onPress: () => {} },
-    { label: "Location", onPress: () => {} },
+    { label: "Location", onPress: () => {router.push("/settings/location/page")} },
     { label: "Account", onPress: () => {} },
     {
       label: "Driver License",

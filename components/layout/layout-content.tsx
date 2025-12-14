@@ -8,8 +8,8 @@ import useLayoutFonts from "@/hooks/use-font";
 import { useTheme } from "@/hooks/use-theme";
 import { removeNotificationListeners, setupNotificationListeners } from "@/notifications/listeners";
 import {
-  configureNotificationsHandler,
-  registerForPushNotifications,
+    configureNotificationsHandler,
+    registerForPushNotifications,
 } from "@/notifications/register";
 import { Stack } from "expo-router";
 import { useEffect } from "react";
@@ -77,10 +77,6 @@ export default function LayoutContent() {
         />
         <Stack.Screen
           name="payment-made/page"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="driver-license/page"
           options={{ headerShown: false }}
         />
       </Stack>

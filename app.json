@@ -47,7 +47,22 @@
           }
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icons/rent-icon.png",
+          "color": "#ffffff",
+          "defaultChannel": "booking_notifications",
+          "sounds": []
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

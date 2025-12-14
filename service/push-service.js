@@ -1,17 +1,45 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
+import { Platform } from "react-native";
+
+// Check if running in Expo Go on Android (notifications not supported in SDK 53+)
+const isExpoGo = Constants.appOwnership === "expo";
+const isAndroid = Platform.OS === "android";
+const notificationsUnavailable = isExpoGo && isAndroid;
+
+// Lazy load notifications module to avoid import error in Expo Go on Android
+let Notifications = null;
+
+async function getNotificationsModule() {
+  if (notificationsUnavailable) {
+    return null;
+  }
+  if (!Notifications) {
+    Notifications = await import("expo-notifications");
+  }
+  return Notifications;
+}
 
 // this function is used to send a local notification to the user
 
 export async function sendLocalNotification({ title, body, data = {} }) {
+  // Skip notifications in Expo Go on Android (not supported in SDK 53+)
+  if (notificationsUnavailable) {
+    console.warn(
+      "Push notifications are not available in Expo Go on Android. Use a development build for full notification support."
+    );
+    return `mock_notification_${Date.now()}`;
+  }
+
   try {
-    const notification = await Notifications.scheduleNotificationAsync({
+    const NotificationsModule = await getNotificationsModule();
+    const notification = await NotificationsModule.scheduleNotificationAsync({
       content: {
         title,
         body,
         data,
         sound: true,
-        priority: Notifications.AndroidNotificationPriority.HIGH,
+        priority: NotificationsModule.AndroidNotificationPriority.HIGH,
         vibrate: [0, 250, 250, 250],
         badge: 1,
       },
@@ -31,14 +59,23 @@ export async function scheduleNotification({
   data = {},
   seconds = 60,
 }) {
+  // Skip notifications in Expo Go on Android (not supported in SDK 53+)
+  if (notificationsUnavailable) {
+    console.warn(
+      "Push notifications are not available in Expo Go on Android. Use a development build for full notification support."
+    );
+    return `mock_scheduled_notification_${Date.now()}`;
+  }
+
   try {
-    const notification = await Notifications.scheduleNotificationAsync({
+    const NotificationsModule = await getNotificationsModule();
+    const notification = await NotificationsModule.scheduleNotificationAsync({
       content: {
         title,
         body,
         data,
         sound: true,
-        priority: Notifications.AndroidNotificationPriority.HIGH,
+        priority: NotificationsModule.AndroidNotificationPriority.HIGH,
         vibrate: [0, 250, 250, 250],
         badge: 1,
       },

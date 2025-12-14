@@ -28,30 +28,23 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="notifications/page"
+        name="notifications"
         options={{
           headerShown: false,
-          title: "Home",
+          title: "Notifications",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="notifications-outline" color={color} size={size} />
           ),
         }}
       />
       <Tabs.Screen
-        name="settings/page"
+        name="settings"
         options={{
           headerShown: false,
           title: "Settings",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="settings-outline" color={color} size={size} />
           ),
-        }}
-      />
-      <Tabs.Screen
-        name="settings/driver-license/page"
-        options={{
-          headerShown: false,
-          href: null, 
         }}
       />
     </Tabs>

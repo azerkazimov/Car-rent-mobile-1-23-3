@@ -3,7 +3,7 @@ import SignInForm from "./components/sign-in-form";
 
 export default function SignIn() {
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1 }}>
       <SignInForm />
     </SafeAreaView>
   );

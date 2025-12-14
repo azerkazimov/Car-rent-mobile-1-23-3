@@ -1,28 +1,61 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
-import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 
-export function configureNotificationsHandler() {
-    Notifications.setNotificationHandler({
+// Check if running in Expo Go on Android (notifications not supported in SDK 53+)
+const isExpoGo = Constants.appOwnership === "expo";
+const isAndroid = Platform.OS === "android";
+const notificationsUnavailable = isExpoGo && isAndroid;
+
+// Lazy load notifications module
+let Notifications: typeof import("expo-notifications") | null = null;
+
+async function getNotificationsModule() {
+    if (notificationsUnavailable) {
+        return null;
+    }
+    if (!Notifications) {
+        Notifications = await import("expo-notifications");
+    }
+    return Notifications;
+}
+
+export async function configureNotificationsHandler() {
+    if (notificationsUnavailable) {
+        console.warn("Push notifications are not available in Expo Go on Android.");
+        return;
+    }
+
+    const NotificationsModule = await getNotificationsModule();
+    if (!NotificationsModule) return;
+
+    NotificationsModule.setNotificationHandler({
         handleNotification: async () => ({
             shouldShowAlert: true,
             shouldPlaySound: true,
             shouldSetBadge: true,
             shouldShowBanner: true,
             shouldShowList: true,
-            priority: Notifications.AndroidNotificationPriority.HIGH,
+            priority: NotificationsModule.AndroidNotificationPriority.HIGH,
         })
-    })
+    });
 }
 
 export async function registerForPushNotifications(): Promise<string | null> {
+    if (notificationsUnavailable) {
+        console.warn("Push notifications are not available in Expo Go on Android. Use a development build.");
+        return null;
+    }
+
     try {
-        const { status: existingStatus } = await Notifications.getPermissionsAsync();
+        const NotificationsModule = await getNotificationsModule();
+        if (!NotificationsModule) return null;
+
+        const { status: existingStatus } = await NotificationsModule.getPermissionsAsync();
         let finalStatus = existingStatus;
 
         if (existingStatus !== 'granted') {
-            const { status } = await Notifications.requestPermissionsAsync();
+            const { status } = await NotificationsModule.requestPermissionsAsync();
             finalStatus = status;
         }
 
@@ -33,16 +66,16 @@ export async function registerForPushNotifications(): Promise<string | null> {
 
         // Setup Android notification channel first
         if (Platform.OS === 'android') {
-            await Notifications.setNotificationChannelAsync('booking_notifications', {
+            await NotificationsModule.setNotificationChannelAsync('booking_notifications', {
                 name: 'booking_notifications',
-                importance: Notifications.AndroidImportance.MAX,
+                importance: NotificationsModule.AndroidImportance.MAX,
                 vibrationPattern: [0, 250, 250, 250],
                 lightColor: '#d0e0e3',
                 sound: 'default',
                 enableVibrate: true,
                 enableLights: true,
                 showBadge: true,
-            })
+            });
         }
 
         // Try to get Expo push token (requires EAS projectId)
@@ -53,9 +86,9 @@ export async function registerForPushNotifications(): Promise<string | null> {
             return null;
         }
 
-        const tokenData = await Notifications.getExpoPushTokenAsync({
+        const tokenData = await NotificationsModule.getExpoPushTokenAsync({
             projectId,
-        })
+        });
 
         const token = tokenData.data;
         await AsyncStorage.setItem('pushToken', token);

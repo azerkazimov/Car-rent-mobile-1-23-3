@@ -1,13 +1,40 @@
-import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
 import { router } from 'expo-router';
+import { Platform } from 'react-native';
 
-let notificationListener: Notifications.EventSubscription | undefined;
-let responseListener: Notifications.EventSubscription | undefined;
+// Check if running in Expo Go on Android (notifications not supported in SDK 53+)
+const isExpoGo = Constants.appOwnership === "expo";
+const isAndroid = Platform.OS === "android";
+const notificationsUnavailable = isExpoGo && isAndroid;
 
+// Lazy load notifications module
+let Notifications: typeof import("expo-notifications") | null = null;
 
-export function setupNotificationListeners() {
+async function getNotificationsModule() {
+    if (notificationsUnavailable) {
+        return null;
+    }
+    if (!Notifications) {
+        Notifications = await import("expo-notifications");
+    }
+    return Notifications;
+}
 
-    notificationListener = Notifications.addNotificationReceivedListener((notification) => {
+type EventSubscription = { remove: () => void };
+
+let notificationListener: EventSubscription | undefined;
+let responseListener: EventSubscription | undefined;
+
+export async function setupNotificationListeners() {
+    if (notificationsUnavailable) {
+        console.warn("Push notifications are not available in Expo Go on Android.");
+        return;
+    }
+
+    const NotificationsModule = await getNotificationsModule();
+    if (!NotificationsModule) return;
+
+    notificationListener = NotificationsModule.addNotificationReceivedListener((notification) => {
         console.log('Notification received:', notification);
         const { data } = notification.request.content;
 
@@ -16,7 +43,7 @@ export function setupNotificationListeners() {
         }
     });
 
-    responseListener = Notifications.addNotificationResponseReceivedListener((response) => {
+    responseListener = NotificationsModule.addNotificationResponseReceivedListener((response) => {
         console.log('Notification response received:', response);
 
         const data = response.notification.request.content.data;
@@ -45,31 +72,60 @@ export function removeNotificationListeners() {
 
 // Get all scheduled notifications
 export async function getScheduledNotifications() {
-    return await Notifications.getAllScheduledNotificationsAsync();
+    if (notificationsUnavailable) return [];
+    
+    const NotificationsModule = await getNotificationsModule();
+    if (!NotificationsModule) return [];
+    
+    return await NotificationsModule.getAllScheduledNotificationsAsync();
 }
 
 // Cancel a specific notification
 export async function cancelNotification(notificationId: string) {
-    await Notifications.cancelScheduledNotificationAsync(notificationId);
+    if (notificationsUnavailable) return;
+    
+    const NotificationsModule = await getNotificationsModule();
+    if (!NotificationsModule) return;
+    
+    await NotificationsModule.cancelScheduledNotificationAsync(notificationId);
 }
 
 // Cancel all notifications
 export async function cancelAllNotifications() {
-    await Notifications.cancelAllScheduledNotificationsAsync();
+    if (notificationsUnavailable) return;
+    
+    const NotificationsModule = await getNotificationsModule();
+    if (!NotificationsModule) return;
+    
+    await NotificationsModule.cancelAllScheduledNotificationsAsync();
 }
 
 // Clear all delivered notifications from notification tray
 export async function clearAllDeliveredNotifications() {
-    await Notifications.dismissAllNotificationsAsync();
+    if (notificationsUnavailable) return;
+    
+    const NotificationsModule = await getNotificationsModule();
+    if (!NotificationsModule) return;
+    
+    await NotificationsModule.dismissAllNotificationsAsync();
 }
 
 // Get notification badges (iOS)
 export async function getBadgeCount() {
-    return await Notifications.getBadgeCountAsync();
+    if (notificationsUnavailable) return 0;
+    
+    const NotificationsModule = await getNotificationsModule();
+    if (!NotificationsModule) return 0;
+    
+    return await NotificationsModule.getBadgeCountAsync();
 }
 
 // Set notification badge (iOS)
 export async function setBadgeCount(count: number) {
-    await Notifications.setBadgeCountAsync(count);
+    if (notificationsUnavailable) return;
+    
+    const NotificationsModule = await getNotificationsModule();
+    if (!NotificationsModule) return;
+    
+    await NotificationsModule.setBadgeCountAsync(count);
 }
-
